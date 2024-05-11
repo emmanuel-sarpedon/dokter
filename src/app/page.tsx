@@ -1,15 +1,37 @@
-import dynamic from "next/dynamic";
+"use client";
+
+import SearchEngine from "@/components/SearchEngine.tsx";
+import { MapContext } from "@/context/MapContext.ts";
+import { usePractitioners } from "@/hooks/usePractitioners.ts";
+import { useUserLocation } from "@/hooks/useUserLocation.ts";
+import Map from "@/components/Map.tsx";
 
 export default function Home() {
-  const Map = dynamic(() => import("@/components/Map"), {
-    ssr: false,
-  });
+  const {
+    isFetchingPractitioner,
+    practitioners,
+    setPractitioners,
+    handleFetchPractitioners,
+  } = usePractitioners();
+  const userLocation = useUserLocation();
 
   return (
-    <main>
-      <div className={"w-screen h-screen border"}>
-        <Map />
-      </div>
-    </main>
+    <MapContext.Provider
+      value={{
+        isFetchingPractitioner,
+        practitioners,
+        setPractitioners,
+        handleFetchPractitioners,
+        userLocation,
+      }}
+    >
+      <main>
+        <div className={"w-screen h-screen border relative"}>
+          <Map>
+            <SearchEngine />
+          </Map>
+        </div>
+      </main>
+    </MapContext.Provider>
   );
 }
