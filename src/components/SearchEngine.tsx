@@ -113,7 +113,7 @@ const SearchEngine = () => {
                   <AccordionTrigger>Affiner ma recherche</AccordionTrigger>
                   {fields.map(({ label, name, options }) => {
                     return (
-                      <AccordionContent className={"px-1"}>
+                      <AccordionContent className={"px-1"} key={label}>
                         <FormField
                           key={name}
                           control={form.control}
