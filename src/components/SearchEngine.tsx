@@ -37,7 +37,6 @@ import { Practitioner } from "@prisma/client";
 const SearchEngine = ({
   isOpened,
   setIsOpened,
-  setIsMenuOpened,
   setIsResultsOpen,
   fieldsRecords,
   isFetchingPractitioner,
@@ -56,11 +55,11 @@ const SearchEngine = ({
     fieldsRecords;
 
   const formSchema = z.object({
-    profession: z.string().optional(),
-    procedure: z.string().optional(),
-    sesamVitale: z.string().optional(),
-    city: z.string().optional(),
-    agreement: z.string().optional(),
+    profession: z.string().optional().nullable(),
+    procedure: z.string().optional().nullable(),
+    sesamVitale: z.string().optional().nullable(),
+    city: z.string().optional().nullable(),
+    agreement: z.string().optional().nullable(),
   });
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -70,7 +69,6 @@ const SearchEngine = ({
   function onSubmit(values: z.infer<typeof formSchema>) {
     handleFetchPractitioners({ ...values }).then(() => {
       setIsOpened(false);
-      setIsMenuOpened(false);
       setIsResultsOpen(true);
     });
   }
@@ -108,6 +106,23 @@ const SearchEngine = ({
               <Accordion type={"single"} collapsible defaultValue={"filters"}>
                 <AccordionItem value={"filters"}>
                   <AccordionTrigger>Affiner ma recherche</AccordionTrigger>
+                  <Button
+                    variant={"ghost"}
+                    className={
+                      "mb-4 text-red-700 hover:bg-red-100 hover:text-red-900"
+                    }
+                    onClick={(event) => {
+                      event.preventDefault();
+
+                      form.setValue("profession", null);
+                      form.setValue("procedure", null);
+                      form.setValue("sesamVitale", null);
+                      form.setValue("city", null);
+                      form.setValue("agreement", null);
+                    }}
+                  >
+                    Réinitialiser les filtres
+                  </Button>
                   {fields.map(({ label, name, options }) => {
                     return (
                       <AccordionContent className={"px-1"} key={label}>
@@ -123,7 +138,7 @@ const SearchEngine = ({
                               <Select
                                 disabled={isFetchingPractitioner}
                                 onValueChange={field.onChange}
-                                defaultValue={field.value}
+                                defaultValue={field.value || undefined}
                               >
                                 <FormControl>
                                   <SelectTrigger>
