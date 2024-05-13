@@ -58,11 +58,11 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    if (agreement) WHERE.push(`agreement = '${agreement}'`);
-    if (sesamVitale) WHERE.push(`sesamVitale = '${sesamVitale}'`);
-    if (profession) WHERE.push(`profession = '${profession}'`);
-    if (city) WHERE.push(`city = '${city.replace(/'/g, "''")}'`);
-    if (procedure) WHERE.push(`procedure = '${procedure}'`);
+    if (agreement) WHERE.push(`"agreement" = '${agreement}'`);
+    if (sesamVitale) WHERE.push(`"sesamVitale" = '${sesamVitale}'`);
+    if (profession) WHERE.push(`"profession" = '${profession}'`);
+    if (city) WHERE.push(`"city" = '${city.replace(/'/g, "''")}'`);
+    if (procedure) WHERE.push(`"procedure" = '${procedure}'`);
 
     if (WHERE.length) query += ` WHERE ${WHERE.join(" AND ")}`;
 
