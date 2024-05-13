@@ -5,9 +5,16 @@ import "leaflet/dist/leaflet.css";
 import "leaflet-defaulticon-compatibility";
 import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css";
 import Markers from "@/components/Markers.tsx";
-import { PropsWithChildren } from "react";
+import SearchEngine from "@/components/SearchEngine.tsx";
+import { usePractitioners } from "@/hooks/usePractitioners.ts";
+import { useFields } from "@/hooks/useFields.ts";
 
-export default function Map({ children }: PropsWithChildren) {
+export default function Map() {
+  const { isFetchingPractitioner, practitioners, handleFetchPractitioners } =
+    usePractitioners();
+
+  const fields = useFields();
+
   return (
     <MapContainer
       center={[-21.114533, 55.532062]} // default position to Reunion Island
@@ -20,9 +27,14 @@ export default function Map({ children }: PropsWithChildren) {
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
 
-      <Markers />
+      <Markers practitioners={practitioners} fieldsRecords={fields}/>
 
-      {children}
+      <SearchEngine
+        fieldsRecords={fields}
+        isFetchingPractitioner={isFetchingPractitioner}
+        practitioners={practitioners}
+        handleFetchPractitioners={handleFetchPractitioners}
+      />
     </MapContainer>
   );
 }

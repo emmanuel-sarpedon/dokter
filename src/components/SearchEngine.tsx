@@ -1,7 +1,6 @@
 "use client";
 
 import { Button } from "@/components/ui/button.tsx";
-import { useFields } from "@/hooks/useFields.ts";
 import {
   Select,
   SelectContent,
@@ -27,8 +26,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet.tsx";
-import { useContext, useState } from "react";
-import { MapContext } from "@/context/MapContext.ts";
+import { useState } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { P } from "@/components/Typography.tsx";
 import { BellIcon } from "@radix-ui/react-icons";
@@ -38,16 +36,24 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { Practitioner } from "@prisma/client";
 import { useMap } from "react-leaflet";
 
-const SearchEngine = () => {
+const SearchEngine = ({
+  fieldsRecords,
+  isFetchingPractitioner,
+  practitioners,
+  handleFetchPractitioners,
+}: {
+  fieldsRecords: Fields;
+  isFetchingPractitioner: boolean;
+  practitioners: Partial<Practitioner>[];
+  handleFetchPractitioners: (filters: Record<string, unknown>) => Promise<void>;
+}) => {
   const map = useMap();
 
   const { professions, procedures, sesamVitales, cities, agreements } =
-    useFields();
-
-  const { isFetchingPractitioner, practitioners, handleFetchPractitioners } =
-    useContext(MapContext);
+    fieldsRecords;
 
   const [isSheetOpened, setIsSheetOpened] = useState(false);
 
@@ -65,7 +71,7 @@ const SearchEngine = () => {
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     if (!handleFetchPractitioners) return;
-    handleFetchPractitioners(values);
+    handleFetchPractitioners(values).then();
   }
 
   const fields: {
@@ -84,11 +90,11 @@ const SearchEngine = () => {
     <Sheet open={isSheetOpened} onOpenChange={setIsSheetOpened}>
       <SheetTrigger className={"z-10 absolute top-10 right-10"} asChild>
         {isFetchingPractitioner ? (
-          <Button className={"font-dosis"}>{"Chargement..."}</Button>
+          <Button className={"font-dosis bg-blue-800"}>{"Chargement..."}</Button>
         ) : (
           <Button
-            className={"font-dosis"}
-          >{`${practitioners.length} résultats. Affiner votre recherche`}</Button>
+            className={"font-dosis bg-blue-800"}
+          >{`${practitioners.length} résultats. Cliquez pour affiner votre recherche`}</Button>
         )}
       </SheetTrigger>
 
@@ -108,7 +114,7 @@ const SearchEngine = () => {
               className={"py-4 flex flex-col gap-4"}
               onSubmit={form.handleSubmit(onSubmit)}
             >
-              <Accordion type={"single"} collapsible>
+              <Accordion type={"single"} collapsible defaultValue={"filters"}>
                 <AccordionItem value={"filters"}>
                   <AccordionTrigger>Affiner ma recherche</AccordionTrigger>
                   {fields.map(({ label, name, options }) => {
@@ -150,7 +156,7 @@ const SearchEngine = () => {
                 </AccordionItem>
               </Accordion>
 
-              <Button type="submit" disabled={isFetchingPractitioner}>
+              <Button type="submit" disabled={isFetchingPractitioner} className={"bg-blue-800"}>
                 Filtrer
               </Button>
             </form>
@@ -171,7 +177,7 @@ const SearchEngine = () => {
                       setIsSheetOpened(false);
                     }}
                   >
-                    <P bold>{`DR ${name} - ${profession}`}</P>
+                    <P bold className={"text-blue-600"}>{`DR ${name} - ${profession}`}</P>
                     <P>{address}</P>
                     {tel ? (
                       <P className={"flex items-center"}>

@@ -11,6 +11,8 @@ export const usePractitioners = () => {
   );
 
   useEffect(() => {
+    if (practitioners.length) return;
+
     setIsFetchingPractitioner(true);
 
     fetch("/api/practitioners")
@@ -19,7 +21,7 @@ export const usePractitioners = () => {
         setPractitioners(practitioners);
       })
       .finally(() => setIsFetchingPractitioner(false));
-  }, []);
+  }, [practitioners]);
 
   const handleFetchPractitioners = async ({
     profession,
@@ -52,5 +54,10 @@ export const usePractitioners = () => {
       .finally(() => setIsFetchingPractitioner(false));
   };
 
-  return { practitioners, setPractitioners, isFetchingPractitioner, handleFetchPractitioners };
+  return {
+    practitioners,
+    setPractitioners,
+    isFetchingPractitioner,
+    handleFetchPractitioners,
+  };
 };
