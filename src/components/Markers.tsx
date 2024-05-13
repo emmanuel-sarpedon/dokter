@@ -14,8 +14,6 @@ const Markers = ({
   fieldsRecords: Fields;
   practitioners: Partial<Practitioner>[];
 }) => {
-  const map = useMap();
-
   const userLocation = useUserLocation();
 
   return (
