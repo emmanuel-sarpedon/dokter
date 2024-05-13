@@ -138,7 +138,7 @@ const SearchEngine = ({
                               <Select
                                 disabled={isFetchingPractitioner}
                                 onValueChange={field.onChange}
-                                defaultValue={field.value || undefined}
+                                defaultValue={field.value as any}
                               >
                                 <FormControl>
                                   <SelectTrigger>
