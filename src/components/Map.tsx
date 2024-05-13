@@ -13,8 +13,8 @@ import { useEffect, useState } from "react";
 import ActionButtons from "@/components/ActionButtons.tsx";
 
 export default function Map() {
-  const [isMenuOpened, setIsMenuOpened] = useState(false);
-  const [isFiltersSheetOpened, setIsFiltersSheetOpened] = useState(false);
+  const [isMenuOpened, setIsMenuOpened] = useState(true);
+  const [isFiltersSheetOpened, setIsFiltersSheetOpened] = useState(true);
   const [isResultsOpen, setIsResultsOpen] = useState(false);
   const [isSatelliteMode, setIsSatelliteMode] = useState(false);
 
@@ -34,8 +34,8 @@ export default function Map() {
   return (
     <MapContainer
       zoomControl={false}
-      center={[-21.114533, 55.532062]} // default position to Reunion Island
-      zoom={10}
+      center={[-20.890314391551765, 55.51186605492485]} // default position on Reunion Island
+      zoom={14}
       zoomDelta={0.25}
       scrollWheelZoom={true}
       className={"w-full h-full"}

@@ -7,6 +7,7 @@ import { P } from "@/components/Typography.tsx";
 import { useUserLocation } from "@/hooks/useUserLocation.ts";
 import { Practitioner } from "@prisma/client";
 import colors from "tailwindcss/colors";
+import { useEffect } from "react";
 
 const Markers = ({
   practitioners,
@@ -14,7 +15,12 @@ const Markers = ({
   fieldsRecords: Fields;
   practitioners: Partial<Practitioner>[];
 }) => {
+  const map = useMap();
   const userLocation = useUserLocation();
+
+  useEffect(() => {
+    if (userLocation) map.setView(userLocation, 12);
+  }, [map, userLocation]);
 
   return (
     <>
@@ -24,8 +30,9 @@ const Markers = ({
             <CircleMarker
               key={i}
               center={[latitude, longitude]}
-              radius={6}
-              color={colors.pink[500]}
+              radius={5}
+              color={colors.red[500]}
+              className={"relative"}
             >
               <Popup>
                 <P

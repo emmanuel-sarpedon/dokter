@@ -184,6 +184,10 @@ async function handlePractitioner() {
   await prisma.practitioner.createMany({
     data: practitioners,
   });
+
+  await prisma.$executeRawUnsafe(
+      `UPDATE "Practitioner" SET "point" = ST_SetSRID(ST_MakePoint(longitude::float, latitude::float), 4326);`
+  );
 }
 
 async function getResults(res: Response) {

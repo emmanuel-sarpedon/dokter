@@ -25,35 +25,47 @@ export default function Results({
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <SheetContent side={"bottom"}>
         <SheetHeader>
-          <SheetTitle>Recherche de professionnels de santé</SheetTitle>
+          <SheetTitle>
+            {practitioners.length
+              ? `${practitioners.length} résultats`
+              : "Aucun résultat"}
+          </SheetTitle>
           <SheetDescription>
-            {"Cliquer sur un professionnel pour le localiser sur la carte"}
+            {practitioners.length
+              ? "Cliquer sur un professionnel pour le localiser sur la carte"
+              : "Aucun professionnel trouvé. Élargissez vos critères de recherche."}
           </SheetDescription>
         </SheetHeader>
 
         <ScrollArea className={"h-96 py-10"}>
-          {practitioners.map(
-            ({ id, name, address, tel, profession, longitude, latitude }) => {
-              return (
-                <div
-                  key={id}
-                  className={"p-3 hover:cursor-pointer"}
-                  onClick={() => {
-                    if (!map) return;
-                    if (!latitude || !longitude) return;
+          <div
+            className={
+              "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-2"
+            }
+          >
+            {practitioners.map(
+              ({ id, name, address, tel, profession, longitude, latitude }) => {
+                return (
+                  <div
+                    key={id}
+                    className={"p-3 hover:cursor-pointer"}
+                    onClick={() => {
+                      if (!map) return;
+                      if (!latitude || !longitude) return;
 
-                    setIsOpen(false);
-                    map.setView([latitude, longitude], 28);
-                  }}
-                >
-                  <P
-                    bold
-                    className={"truncate"}
-                  >{`DR ${name} - ${profession}`}</P>
-                </div>
-              );
-            },
-          )}
+                      setIsOpen(false);
+                      map.setView([latitude, longitude], 28);
+                    }}
+                  >
+                    <P
+                      bold
+                      className={"truncate"}
+                    >{`DR ${name} - ${profession}`}</P>
+                  </div>
+                );
+              },
+            )}
+          </div>
         </ScrollArea>
       </SheetContent>
     </Sheet>

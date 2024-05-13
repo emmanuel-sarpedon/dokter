@@ -24,12 +24,8 @@ import {
   SheetDescription,
   SheetHeader,
   SheetTitle,
-  SheetTrigger,
 } from "@/components/ui/sheet.tsx";
-import { useState } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { P } from "@/components/Typography.tsx";
-import { BellIcon } from "@radix-ui/react-icons";
 import {
   Accordion,
   AccordionContent,
@@ -37,7 +33,6 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Practitioner } from "@prisma/client";
-import { useMap } from "react-leaflet";
 
 const SearchEngine = ({
   isOpened,
@@ -57,7 +52,6 @@ const SearchEngine = ({
   practitioners: Partial<Practitioner>[];
   handleFetchPractitioners: (filters: Record<string, unknown>) => Promise<void>;
 }) => {
-  const map = useMap();
   const { professions, procedures, sesamVitales, cities, agreements } =
     fieldsRecords;
 
@@ -74,13 +68,10 @@ const SearchEngine = ({
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    if (!handleFetchPractitioners) return;
-    handleFetchPractitioners(values).then(() => {
+    handleFetchPractitioners({ ...values }).then(() => {
       setIsOpened(false);
       setIsMenuOpened(false);
       setIsResultsOpen(true);
-
-      map.setView([-21.114533, 55.532062], 10);
     });
   }
 
