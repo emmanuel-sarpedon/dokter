@@ -40,22 +40,26 @@ import { Practitioner } from "@prisma/client";
 import { useMap } from "react-leaflet";
 
 const SearchEngine = ({
+  isOpened,
+  setIsOpened,
+  setIsMenuOpened,
+  setIsResultsOpen,
   fieldsRecords,
   isFetchingPractitioner,
-  practitioners,
   handleFetchPractitioners,
 }: {
+  isOpened: boolean;
+  setIsOpened: (isOpen: boolean) => void;
+  setIsMenuOpened: (isMenuOpened: boolean) => void;
+  setIsResultsOpen: (isOpen: boolean) => void;
   fieldsRecords: Fields;
   isFetchingPractitioner: boolean;
   practitioners: Partial<Practitioner>[];
   handleFetchPractitioners: (filters: Record<string, unknown>) => Promise<void>;
 }) => {
   const map = useMap();
-
   const { professions, procedures, sesamVitales, cities, agreements } =
     fieldsRecords;
-
-  const [isSheetOpened, setIsSheetOpened] = useState(false);
 
   const formSchema = z.object({
     profession: z.string().optional(),
@@ -71,7 +75,13 @@ const SearchEngine = ({
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     if (!handleFetchPractitioners) return;
-    handleFetchPractitioners(values).then();
+    handleFetchPractitioners(values).then(() => {
+      setIsOpened(false);
+      setIsMenuOpened(false);
+      setIsResultsOpen(true);
+
+      map.setView([-21.114533, 55.532062], 10);
+    });
   }
 
   const fields: {
@@ -87,18 +97,8 @@ const SearchEngine = ({
   ];
 
   return (
-    <Sheet open={isSheetOpened} onOpenChange={setIsSheetOpened}>
-      <SheetTrigger className={"z-10 absolute top-10 right-10"} asChild>
-        {isFetchingPractitioner ? (
-          <Button className={"font-dosis bg-blue-800"}>{"Chargement..."}</Button>
-        ) : (
-          <Button
-            className={"font-dosis bg-blue-800"}
-          >{`${practitioners.length} résultats. Cliquez pour affiner votre recherche`}</Button>
-        )}
-      </SheetTrigger>
-
-      <SheetContent>
+    <Sheet open={isOpened} onOpenChange={setIsOpened}>
+      <SheetContent className={"sm:max-w-1000px"}>
         <SheetHeader className={"hidden sm:block"}>
           <SheetTitle>Recherche de professionnels de santé</SheetTitle>
           <SheetDescription>
@@ -156,40 +156,11 @@ const SearchEngine = ({
                 </AccordionItem>
               </Accordion>
 
-              <Button type="submit" disabled={isFetchingPractitioner} className={"bg-blue-800"}>
+              <Button type="submit" disabled={isFetchingPractitioner}>
                 Filtrer
               </Button>
             </form>
           </Form>
-
-          <div className={"flex flex-col gap-y-4 "}>
-            {practitioners.map(
-              ({ id, name, address, tel, profession, longitude, latitude }) => {
-                return (
-                  <div
-                    key={id}
-                    className={"p-2 shadow rounded hover:cursor-pointer"}
-                    onClick={() => {
-                      if (!map) return;
-                      if (!latitude || !longitude) return;
-
-                      map.setView([latitude, longitude], 22);
-                      setIsSheetOpened(false);
-                    }}
-                  >
-                    <P bold className={"text-blue-600"}>{`DR ${name} - ${profession}`}</P>
-                    <P>{address}</P>
-                    {tel ? (
-                      <P className={"flex items-center"}>
-                        <BellIcon className={"mr-2 h-4 w-4"} />
-                        {tel}
-                      </P>
-                    ) : null}
-                  </div>
-                );
-              },
-            )}
-          </div>
         </ScrollArea>
       </SheetContent>
     </Sheet>

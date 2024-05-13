@@ -14,3 +14,7 @@
 .leaflet-bottom {
   z-index: 0 !important;
 }
+
+.leaflet-control-attribution {
+  display: none;
+}
