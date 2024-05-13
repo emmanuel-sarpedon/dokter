@@ -44,7 +44,7 @@ export default function Results({
             }
           >
             {practitioners.map(
-              ({ id, name, address, tel, profession, longitude, latitude }) => {
+              ({ id, name, profession, longitude, latitude }) => {
                 return (
                   <div
                     key={id}
