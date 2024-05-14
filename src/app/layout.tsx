@@ -2,6 +2,7 @@ import { Dosis } from "next/font/google";
 import "./globals.css";
 import { ReactNode } from "react";
 import { cn } from "@/lib/utils";
+import { GoogleTagManager } from "@next/third-parties/google";
 
 const DosisFont = Dosis({ subsets: ["latin"], variable: "--font-dosis" });
 
@@ -19,6 +20,7 @@ export default function RootLayout({
 }: Readonly<{ children: ReactNode }>) {
   return (
     <html lang="fr">
+      <GoogleTagManager gtmId="GTM-M8TDMF57" />
       <body className={cn(DosisFont.variable, "font-dosis min-h-screen")}>
         {children}
       </body>
