@@ -1,13 +1,12 @@
 "use client";
 
-import GooeyCircleLoader from "react-loaders-kit/lib/gooeyCircle/GooeyCircleLoader";
 import { H1 } from "@/components/Typography.tsx";
-
+import { MutatingDots } from "react-loader-spinner";
 const Loading = () => {
   return (
     <main className={"w-screen h-screen flex items-center justify-center"}>
       <H1>Dokter.myapp.re</H1>
-      <GooeyCircleLoader loading colors={["#3066ff", "#ffff00", "#ff0000"]} />
+      <MutatingDots color={"#3066ff"} secondaryColor={"#ff0000"} />
     </main>
   );
 };
