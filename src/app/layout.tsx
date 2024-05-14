@@ -10,9 +10,9 @@ export const metadata = {
   icons:
     "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🇷🇪</text></svg>",
   title:
-    "Dokter.re - Trouvez facilement un médecin généraliste ou un spécialiste à proximité",
+    "Dokter | Trouvez facilement un médecin généraliste, un dentiste ou un établissement de santé",
   description:
-    "La plateforme qui vous permet de trouver facilement un médecin généraliste ou un spécialiste à proximité de chez vous. Trouvez un professionnel de santé, récupérez son contact et prenez rendez-vous !",
+    "La plateforme qui vous permet de trouver facilement un praticien ou un établissement de santé à La Réunion. Localisez, contactez et prenez rendez-vous !",
 };
 
 export default function RootLayout({
