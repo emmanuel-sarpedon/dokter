@@ -2,12 +2,13 @@ import { GlobeIcon } from "@radix-ui/react-icons";
 import { Button } from "@/components/ui/button.tsx";
 import { useUserLocation } from "@/hooks/useUserLocation.ts";
 import { useMap } from "react-leaflet";
-import { Practitioner } from "@prisma/client";
+import { Establishment, Practitioner } from "@prisma/client";
 import { Switch } from "@/components/ui/switch.tsx";
 import { Label } from "@/components/ui/label.tsx";
 import { cn } from "@/lib/utils.ts";
 
 export default function ActionButtons({
+  tabActive,
   isMenuOpened,
   setIsMenuOpened,
   isSatelliteMode,
@@ -15,7 +16,9 @@ export default function ActionButtons({
   setIsFiltersSheetOpened,
   setIsResultsOpen,
   practitioners,
+  establishments,
 }: {
+  tabActive: "practitioner" | "establishment";
   isMenuOpened: boolean;
   setIsMenuOpened: (isMenuOpened: boolean) => void;
   isSatelliteMode: boolean;
@@ -23,6 +26,7 @@ export default function ActionButtons({
   setIsFiltersSheetOpened: (isOpen: boolean) => void;
   setIsResultsOpen: (isOpen: boolean) => void;
   practitioners: Partial<Practitioner>[];
+  establishments: Partial<Establishment>[];
 }) {
   const map = useMap();
   const { handleUserLocationAsk } = useUserLocation();
@@ -34,9 +38,12 @@ export default function ActionButtons({
 
   return (
     <menu
-      className={cn("font-dosis absolute right-0 top-0 w-full md:w-fit md:h-full hover:cursor-default", {
-        "bg-blue-50 bg-opacity-50": isSatelliteMode,
-      })}
+      className={cn(
+        "font-dosis absolute right-0 top-0 w-full md:w-fit md:h-full hover:cursor-default",
+        {
+          "bg-blue-50 bg-opacity-50": isSatelliteMode,
+        },
+      )}
     >
       <Button
         className={cn("absolute top-4 right-4 md:top-8 md:right-8", {
@@ -52,7 +59,12 @@ export default function ActionButtons({
           hidden: !isMenuOpened,
         })}
       >
-        <Button className={"md:invisible"} onClick={() => setIsMenuOpened(false)}>Masquer menu</Button>
+        <Button
+          className={"md:invisible"}
+          onClick={() => setIsMenuOpened(false)}
+        >
+          Masquer menu
+        </Button>
 
         <div className={"flex items-center gap-x-4"}>
           <Switch
@@ -70,10 +82,12 @@ export default function ActionButtons({
         <Button
           variant={"secondary"}
           onClick={() => setIsFiltersSheetOpened(true)}
-        >{`Filtrer les résultats`}</Button>
+        >
+          {"Filtrer les résultats"}
+        </Button>
 
         <Button variant={"secondary"} onClick={() => setIsResultsOpen(true)}>
-          {`Voir les résultats (${practitioners.length})`}
+          {`Visualiser les ${tabActive === "practitioner" ? practitioners.length : establishments.length} résultat${tabActive === "practitioner" ? (practitioners.length > 1 ? "s" : "") : establishments.length > 1 ? "s" : ""}`}
         </Button>
 
         <Button variant={"ghost"} onClick={handleClick}>

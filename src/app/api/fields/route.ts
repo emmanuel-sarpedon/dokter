@@ -5,11 +5,21 @@ const prisma = new PrismaClient();
 
 export async function GET() {
   try {
-    const professions = await prisma.libelleProfession.findMany();
-    const agreements = await prisma.agreement.findMany();
-    const sesamVitales = await prisma.sesamVitale.findMany();
-    const procedures = await prisma.procedure.findMany();
-    const cities = await prisma.city.findMany();
+    const [
+      professions,
+      agreements,
+      sesamVitales,
+      procedures,
+      cities,
+      categories,
+    ] = await Promise.all([
+      prisma.libelleProfession.findMany(),
+      prisma.agreement.findMany(),
+      prisma.sesamVitale.findMany(),
+      prisma.procedure.findMany(),
+      prisma.city.findMany(),
+      prisma.category.findMany(),
+    ]);
 
     return NextResponse.json({
       professions,
@@ -17,6 +27,7 @@ export async function GET() {
       sesamVitales,
       procedures,
       cities,
+      categories,
     });
   } catch (e: any) {
     return NextResponse.json(

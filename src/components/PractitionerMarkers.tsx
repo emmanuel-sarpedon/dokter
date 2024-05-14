@@ -8,19 +8,18 @@ import { Practitioner } from "@prisma/client";
 import colors from "tailwindcss/colors";
 import MarkerClusterGroup from "react-leaflet-cluster";
 
-const Markers = ({
+const PractitionerMarkers = ({
   practitioners,
 }: {
-  fieldsRecords: Fields;
   practitioners: Partial<Practitioner>[];
 }) => {
   return (
     <MarkerClusterGroup chunkedLoading>
       {practitioners?.map(
-        ({ name, profession, address, tel, longitude, latitude }, i) =>
+        ({ id, name, profession, address, tel, longitude, latitude }) =>
           latitude && longitude ? (
             <CircleMarker
-              key={i}
+              key={id}
               center={[latitude, longitude]}
               radius={5}
               color={colors.red[500]}
@@ -53,4 +52,4 @@ const Markers = ({
   );
 };
 
-export default Markers;
+export default PractitionerMarkers;

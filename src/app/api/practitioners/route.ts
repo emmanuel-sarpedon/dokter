@@ -4,6 +4,7 @@ import { z } from "zod";
 
 const prisma = new PrismaClient();
 
+// prettier-ignore
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.nextUrl);
@@ -18,61 +19,32 @@ export async function GET(request: NextRequest) {
       northEastLongitude,
       southWestLatitude,
       southWestLongitude,
-    } = z
-      .object({
-        agreement: z.string().optional(),
-        sesamVitale: z.string().optional(),
-        profession: z.string().optional(),
-        city: z.string().optional(),
-        procedure: z.string().optional(),
-        northEastLatitude: z.string().optional(),
-        northEastLongitude: z.string().optional(),
-        southWestLatitude: z.string().optional(),
-        southWestLongitude: z.string().optional(),
-      })
-      .parse({
-        agreement: searchParams.get("agreement") || undefined,
-        sesamVitale: searchParams.get("sesamVitale") || undefined,
-        profession: searchParams.get("profession") || undefined,
-        city: searchParams.get("city") || undefined,
-        procedure: searchParams.get("procedure") || undefined,
-        northEastLatitude: searchParams.get("northEastLatitude") || undefined,
-        northEastLongitude: searchParams.get("northEastLongitude") || undefined,
-        southWestLatitude: searchParams.get("southWestLatitude") || undefined,
-        southWestLongitude: searchParams.get("southWestLongitude") || undefined,
-      });
+    } = Z_QUERY.parse({
+      agreement:          searchParams.get("agreement") || undefined,
+      sesamVitale:        searchParams.get("sesamVitale") || undefined,
+      profession:         searchParams.get("profession") || undefined,
+      city:               searchParams.get("city") || undefined,
+      procedure:          searchParams.get("procedure") || undefined,
+      northEastLatitude:  searchParams.get("northEastLatitude") || undefined,
+      northEastLongitude: searchParams.get("northEastLongitude") || undefined,
+      southWestLatitude:  searchParams.get("southWestLatitude") || undefined,
+      southWestLongitude: searchParams.get("southWestLongitude") || undefined,
+    });
 
-    // let query =
-    //   'SELECT id, name, address, latitude, longitude, profession, tel FROM "Practitioner"';
 
-    const SELECT = [
-      "id",
-      "name",
-      "address",
-      "latitude",
-      "longitude",
-      "profession",
-      "tel",
-    ];
+    const SELECT: string[] = ["id", "name", "address", "latitude", "longitude", "profession", "tel"];
     const WHERE: string[] = [];
 
     // If the user provides a bounding box, we filter the practitioners
-    if (
-      northEastLongitude &&
-      northEastLatitude &&
-      southWestLongitude &&
-      southWestLatitude
-    ) {
-      WHERE.push(
-        `ST_Within(point, ST_MakeEnvelope(${southWestLongitude}, ${southWestLatitude}, ${northEastLongitude}, ${northEastLatitude}, 4326))`,
-      );
+    if (northEastLongitude && northEastLatitude && southWestLongitude && southWestLatitude) {
+      WHERE.push(`ST_Within(point, ST_MakeEnvelope(${southWestLongitude}, ${southWestLatitude}, ${northEastLongitude}, ${northEastLatitude}, 4326))`);
     }
 
-    if (agreement) WHERE.push(`"agreement" = '${agreement}'`);
-    if (sesamVitale) WHERE.push(`"sesamVitale" = '${sesamVitale}'`);
-    if (profession) WHERE.push(`"profession" = '${profession}'`);
-    if (city) WHERE.push(`"city" = '${city.replace(/'/g, "''")}'`);
-    if (procedure) WHERE.push(`"procedure" = '${procedure}'`);
+    if (agreement)   WHERE.push(`"agreement" = '${agreement.replace(/'/g, "''")}'`);
+    if (sesamVitale) WHERE.push(`"sesamVitale" = '${sesamVitale.replace(/'/g, "''")}'`);
+    if (profession)  WHERE.push(`"profession" = '${profession.replace(/'/g, "''")}'`);
+    if (city)        WHERE.push(`"city" = '${city.replace(/'/g, "''")}'`);
+    if (procedure)   WHERE.push(`"procedure" = '${procedure.replace(/'/g, "''")}'`);
 
     let query = `SELECT ${SELECT.join(", ")} FROM "Practitioner"`;
     if (WHERE.length) query += ` WHERE ${WHERE.join(" AND ")}`;
@@ -80,8 +52,7 @@ export async function GET(request: NextRequest) {
     const practitioners = await prisma.$queryRawUnsafe(query);
 
     if (!practitioners) return NextResponse.json({ practitioners: [] });
-    if (!Array.isArray(practitioners))
-      return NextResponse.json({ practitioners });
+    if (!Array.isArray(practitioners)) return NextResponse.json({ practitioners });
 
     const practitionersReduced: Partial<Practitioner>[] = practitioners.reduce(
       (acc: Partial<Practitioner>[], curr) => {
@@ -104,3 +75,15 @@ export async function GET(request: NextRequest) {
     await prisma.$disconnect();
   }
 }
+
+const Z_QUERY = z.object({
+  agreement: z.string().optional(),
+  sesamVitale: z.string().optional(),
+  profession: z.string().optional(),
+  city: z.string().optional(),
+  procedure: z.string().optional(),
+  northEastLatitude: z.string().optional(),
+  northEastLongitude: z.string().optional(),
+  southWestLatitude: z.string().optional(),
+  southWestLongitude: z.string().optional(),
+});

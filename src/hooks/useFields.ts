@@ -8,6 +8,8 @@ export const useFields = () => {
     sesamVitales: [],
     cities: [],
     agreements: [],
+
+    categories: [],
   });
 
   useEffect(() => {
