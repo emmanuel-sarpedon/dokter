@@ -14,7 +14,7 @@ import ActionButtons from "@/components/ActionButtons.tsx";
 
 export default function Map() {
   const [isMenuOpened, setIsMenuOpened] = useState(true);
-  const [isFiltersSheetOpened, setIsFiltersSheetOpened] = useState(true);
+  const [isFiltersSheetOpened, setIsFiltersSheetOpened] = useState(false);
   const [isResultsOpen, setIsResultsOpen] = useState(false);
   const [isSatelliteMode, setIsSatelliteMode] = useState(false);
 

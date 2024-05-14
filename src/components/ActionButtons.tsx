@@ -34,7 +34,7 @@ export default function ActionButtons({
 
   return (
     <menu
-      className={cn("font-dosis absolute right-0 top-0 w-full md:w-fit", {
+      className={cn("font-dosis absolute right-0 top-0 w-full md:w-fit md:h-full hover:cursor-default", {
         "bg-blue-50 bg-opacity-50": isSatelliteMode,
       })}
     >
@@ -52,7 +52,7 @@ export default function ActionButtons({
           hidden: !isMenuOpened,
         })}
       >
-        <Button onClick={() => setIsMenuOpened(false)}>Masquer menu</Button>
+        <Button className={"md:invisible"} onClick={() => setIsMenuOpened(false)}>Masquer menu</Button>
 
         <div className={"flex items-center gap-x-4"}>
           <Switch
