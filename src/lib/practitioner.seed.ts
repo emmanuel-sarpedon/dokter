@@ -1,3 +1,6 @@
+import { handleResults, removeDuplicate } from "@/lib/utils.ts";
+import { Practitioner } from "@prisma/client";
+
 const HOSTNAME = "data.regionreunion.com";
 const ENDPOINT =
   "/api/explore/v2.1/catalog/datasets/annuaire-sante-liste-localisation-et-tarifs-des-professionnels-de-sante-copie/records";
@@ -5,7 +8,7 @@ const url = new URL(ENDPOINT, `https://${HOSTNAME}`);
 
 export async function getProfessions() {
   url.searchParams.set("group_by", "libelle_profession");
-  const results = (await fetch(url.href).then(getResults)) as {
+  const results = (await fetch(url.href).then(handleResults)) as {
     libelle_profession: string;
   }[];
 
@@ -17,7 +20,7 @@ export async function getProfessions() {
 
 export async function getAgreements() {
   url.searchParams.set("group_by", "column_14");
-  const results = (await fetch(url.href).then(getResults)) as {
+  const results = (await fetch(url.href).then(handleResults)) as {
     column_14: string;
   }[];
 
@@ -29,7 +32,7 @@ export async function getAgreements() {
 
 export async function getSesamVitale() {
   url.searchParams.set("group_by", "column_16");
-  const results = (await fetch(url.href).then(getResults)) as {
+  const results = (await fetch(url.href).then(handleResults)) as {
     column_16: string;
   }[];
 
@@ -41,7 +44,7 @@ export async function getSesamVitale() {
 
 export async function getProcedures() {
   url.searchParams.set("group_by", "nom_acte");
-  const results = (await fetch(url.href).then(getResults)) as {
+  const results = (await fetch(url.href).then(handleResults)) as {
     nom_acte: string;
   }[];
 
@@ -53,17 +56,16 @@ export async function getProcedures() {
 
 export async function getCities() {
   url.searchParams.set("group_by", "commune");
-  const results = (await fetch(url.href).then(getResults)) as {
+  const results = (await fetch(url.href).then(handleResults)) as {
     commune: string;
   }[];
 
   return results
-      .map((result) => result.commune)
-      .filter(Boolean)
-      .reduce(removeDuplicate, []);
-
+    .map((result) => result.commune)
+    .filter(Boolean)
+    .reduce(removeDuplicate, []);
 }
-export async function getPractitioners() {
+export async function getPractitioners(): Promise<Omit<Practitioner, "id">[]> {
   const url = new URL(
     ENDPOINT.replace("records", "exports/json"),
     `https://${HOSTNAME}`,
@@ -121,16 +123,4 @@ export async function getPractitioners() {
       };
     },
   );
-}
-async function getResults(res: Response) {
-  if (!res.ok) throw new Error();
-  const { results } = await res.json();
-
-  return results;
-}
-
-function removeDuplicate(acc: string[], curr: string) {
-  if (!curr) return acc;
-  if (acc.includes(curr)) return acc;
-  return [...acc, curr];
 }

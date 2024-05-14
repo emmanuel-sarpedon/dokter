@@ -7,6 +7,7 @@ import {
   getProfessions,
   getSesamVitale,
 } from "@/lib/practitioner.seed.ts";
+import { getCategories, getEstablishments } from "@/lib/establishement.seed.ts";
 
 const prisma = new PrismaClient();
 
@@ -19,6 +20,8 @@ async function main() {
     practitioners,
     procedures,
     cities,
+    categories,
+    establishments,
   ] = await Promise.all([
     getProfessions(),
     getAgreements(),
@@ -26,6 +29,8 @@ async function main() {
     getPractitioners(),
     getProcedures(),
     getCities(),
+    getCategories(),
+    getEstablishments(),
   ]);
 
   await prisma.$transaction([
@@ -35,6 +40,8 @@ async function main() {
     prisma.agreement.deleteMany(),
     prisma.libelleProfession.deleteMany(),
     prisma.practitioner.deleteMany(),
+    prisma.category.deleteMany(),
+    prisma.establishment.deleteMany(),
 
     prisma.libelleProfession.createMany({
       data: professions.map((libelle) => ({ libelle })),
@@ -67,6 +74,19 @@ async function main() {
 
     prisma.$executeRawUnsafe(
       `UPDATE "Practitioner" SET "point" = ST_SetSRID(ST_MakePoint(longitude::float, latitude::float), 4326);`,
+    ),
+
+    prisma.category.createMany({
+      data: categories.map((libelle) => ({ libelle })),
+      skipDuplicates: true,
+    }),
+
+    prisma.establishment.createMany({
+      data: establishments,
+    }),
+
+    prisma.$executeRawUnsafe(
+      `UPDATE "Establishment" SET "point" = ST_SetSRID(ST_MakePoint(longitude::float, latitude::float), 4326);`,
     ),
   ]);
   console.timeEnd("seed");

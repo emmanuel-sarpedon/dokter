@@ -1,8 +1,9 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 
-export async function GET(request: NextRequest) {
-  const prisma = new PrismaClient();
+const prisma = new PrismaClient();
+
+export async function GET() {
   try {
     const professions = await prisma.libelleProfession.findMany();
     const agreements = await prisma.agreement.findMany();
@@ -22,5 +23,7 @@ export async function GET(request: NextRequest) {
       { error: `${e.name}: ${e.message}` },
       { status: 500 },
     );
+  } finally {
+    await prisma.$disconnect();
   }
 }

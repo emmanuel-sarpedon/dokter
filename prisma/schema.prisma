@@ -13,6 +13,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// ========= PRACTITIONER ========= //
 model LibelleProfession {
   id      Int    @id @default(autoincrement())
   libelle String
@@ -63,4 +64,28 @@ model Practitioner {
   city          String? // commune
   reimbursement String? // remboursement
   procedure     String? // nom_acte
+}
+
+// ========= ESTABLISHMENT ========= //
+model Category {
+  id      Int    @id @default(autoincrement())
+  libelle String
+}
+
+model Establishment {
+  id               Int                      @id @default(autoincrement())
+  finess_et        String // nofinesset
+  finess_ej        String // nofinessej
+  name_short       String // rs
+  name_long        String? // rslongue
+  address          String // numvoie + typvoie + voie + compvoie + lieuditbp + ligneacheminement
+  category_libelle String? // libcategetab
+  siret            String? // siret
+  tel              String? // telephone
+  fax              String? // telecopie
+  date_open        DateTime // dateouv
+  city             String // com_name
+  latitude         Float // coord.lat
+  longitude        Float // coord.lon
+  point            Unsupported("geometry")?
 }

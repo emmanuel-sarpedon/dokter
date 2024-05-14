@@ -2,10 +2,10 @@ import { NextRequest, NextResponse } from "next/server";
 import { Practitioner, PrismaClient } from "@prisma/client";
 import { z } from "zod";
 
+const prisma = new PrismaClient();
+
 export async function GET(request: NextRequest) {
   try {
-    const prisma = new PrismaClient();
-
     const { searchParams } = new URL(request.nextUrl);
 
     const {
@@ -42,11 +42,21 @@ export async function GET(request: NextRequest) {
         southWestLongitude: searchParams.get("southWestLongitude") || undefined,
       });
 
-    let query =
-      'SELECT id, name, address, latitude, longitude, profession, tel FROM "Practitioner"';
+    // let query =
+    //   'SELECT id, name, address, latitude, longitude, profession, tel FROM "Practitioner"';
 
-    const WHERE = [];
+    const SELECT = [
+      "id",
+      "name",
+      "address",
+      "latitude",
+      "longitude",
+      "profession",
+      "tel",
+    ];
+    const WHERE: string[] = [];
 
+    // If the user provides a bounding box, we filter the practitioners
     if (
       northEastLongitude &&
       northEastLatitude &&
@@ -64,6 +74,7 @@ export async function GET(request: NextRequest) {
     if (city) WHERE.push(`"city" = '${city.replace(/'/g, "''")}'`);
     if (procedure) WHERE.push(`"procedure" = '${procedure}'`);
 
+    let query = `SELECT ${SELECT.join(", ")} FROM "Practitioner"`;
     if (WHERE.length) query += ` WHERE ${WHERE.join(" AND ")}`;
 
     const practitioners = await prisma.$queryRawUnsafe(query);
@@ -80,29 +91,7 @@ export async function GET(request: NextRequest) {
       [],
     );
 
-    const practitionersWithOffSet: typeof practitioners = [];
-
-    practitionersReduced.forEach((c) => {
-      let offset: number = 0;
-
-      while (
-        practitionersWithOffSet.filter(
-          (p) =>
-            p.latitude === (c.latitude as number) + offset &&
-            p.longitude === (c.longitude as number) + offset,
-        ).length > 0
-      ) {
-        offset += 0.0001;
-      }
-
-      practitionersWithOffSet.push({
-        ...c,
-        latitude: (c.latitude as number) + offset,
-        longitude: (c.longitude as number) + offset,
-      });
-    });
-
-    return NextResponse.json({ practitioners: practitionersWithOffSet });
+    return NextResponse.json({ practitioners: practitionersReduced });
   } catch (e: any) {
     if (e instanceof z.ZodError)
       return NextResponse.json({ error: e.issues }, { status: 400 });
@@ -111,5 +100,7 @@ export async function GET(request: NextRequest) {
       { error: `${e.name}: ${e.message}` },
       { status: 500 },
     );
+  } finally {
+    await prisma.$disconnect();
   }
 }
