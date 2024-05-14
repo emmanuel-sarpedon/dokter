@@ -14,48 +14,22 @@ import {
 } from "@/components/ui/select.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import { ScrollArea } from "@/components/ui/scroll-area.tsx";
-import { z } from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { useContext } from "react";
+import { MapContext } from "@/context/MapProvider.tsx";
 
-export default function SearchEngineFormForPractitioners({
-  setIsOpened,
-  setIsResultsOpen,
-  fieldsRecords,
-  isFetchingPractitioner,
-  handleFetchPractitioners,
-}: {
-  setIsOpened: (isOpen: boolean) => void;
-  setIsResultsOpen: (isOpen: boolean) => void;
-  fieldsRecords: Fields;
-  isFetchingPractitioner: boolean;
-  handleFetchPractitioners: (filters: Record<string, unknown>) => Promise<void>;
-}) {
-  const { professions, procedures, sesamVitales, cities, agreements } =
-    fieldsRecords;
+export default function SearchEngineFormForPractitioners() {
+  const {
+    fields,
+    isFetchingPractitioner,
+    formForPractitionerSearchEngine,
+    handleSubmitPractitionerSearchEngine,
+  } = useContext(MapContext);
 
-  const formSchema = z.object({
-    profession: z.string().optional(),
-    procedure: z.string().optional(),
-    sesamVitale: z.string().optional(),
-    city: z.string().optional(),
-    agreement: z.string().optional(),
-  });
+  const { professions, procedures, sesamVitales, cities, agreements } = fields;
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-  });
-
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    handleFetchPractitioners({ ...values }).then(() => {
-      setIsOpened(false);
-      setIsResultsOpen(true);
-    });
-  }
-
-  const fields: {
+  const fieldsInput: {
     label: string;
-    name: keyof z.infer<typeof formSchema>;
+    name: string;
     options: { id: number; libelle: string }[];
   }[] = [
     { label: "Profession", name: "profession", options: professions },
@@ -65,18 +39,22 @@ export default function SearchEngineFormForPractitioners({
     { label: "Conventionnement", name: "agreement", options: agreements },
   ];
 
+  if (!formForPractitionerSearchEngine) return null;
+
   return (
     <ScrollArea className={"h-full"}>
-      <Form {...form}>
+      <Form {...formForPractitionerSearchEngine}>
         <form
           className={"py-4 flex flex-col gap-2 sm:gap-2 px-2"}
-          onSubmit={form.handleSubmit(onSubmit)}
+          onSubmit={formForPractitionerSearchEngine.handleSubmit(
+            handleSubmitPractitionerSearchEngine,
+          )}
         >
-          {fields.map(({ label, name, options }) => {
+          {fieldsInput.map(({ label, name, options }) => {
             return (
               <FormField
                 key={name}
-                control={form.control}
+                control={formForPractitionerSearchEngine.control}
                 name={name}
                 render={({ field }) => (
                   <FormItem>

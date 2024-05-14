@@ -7,35 +7,23 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet.tsx";
-import { Establishment, Practitioner } from "@prisma/client";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import SearchEngineFormForPractitioners from "@/components/SearchEngineFormForPractitioners.tsx";
 import SearchEngineFormForEstablishments from "@/components/SearchEngineFormForEstablishments.tsx";
 import { P } from "@/components/Typography.tsx";
+import { MapContext } from "@/context/MapProvider.tsx";
+import { useContext } from "react";
 
-const SearchEngine = ({
-  ...props
-}: {
-  isOpened: boolean;
-  setIsOpened: (isOpen: boolean) => void;
-  tabActive: "practitioner" | "establishment";
-  setTabActive: (tab: "practitioner" | "establishment") => void;
-  setIsMenuOpened: (isMenuOpened: boolean) => void;
-  setIsResultsOpen: (isOpen: boolean) => void;
-  fieldsRecords: Fields;
-  isFetchingPractitioner: boolean;
-  practitioners: Partial<Practitioner>[];
-  isFetchingEstablishment: boolean;
-  establishments: Partial<Establishment>[];
-  handleFetchPractitioners: (filters: Record<string, unknown>) => Promise<void>;
-  handleFetchEstablishments: (
-    filters: Record<string, unknown>,
-  ) => Promise<void>;
-}) => {
-  const { isOpened, setIsOpened, tabActive, setTabActive } = props;
+const SearchEngine = () => {
+  const {
+    tabActive,
+    setTabActive,
+    setIsFiltersSheetOpened,
+    isFiltersSheetOpened,
+  } = useContext(MapContext);
 
   return (
-    <Sheet open={isOpened} onOpenChange={setIsOpened}>
+    <Sheet open={isFiltersSheetOpened} onOpenChange={setIsFiltersSheetOpened}>
       <SheetContent>
         <SheetHeader>
           <SheetTitle>
@@ -62,11 +50,11 @@ const SearchEngine = ({
             <TabsTrigger value="establishment">...un établissement</TabsTrigger>
           </TabsList>
           <TabsContent value={"practitioner"}>
-            <SearchEngineFormForPractitioners {...props} />
+            <SearchEngineFormForPractitioners />
           </TabsContent>
 
           <TabsContent value={"establishment"}>
-            <SearchEngineFormForEstablishments {...props} />
+            <SearchEngineFormForEstablishments />
           </TabsContent>
         </Tabs>
       </SheetContent>

@@ -1,4 +1,3 @@
-import { Establishment, Practitioner } from "@prisma/client";
 import { P } from "@/components/Typography.tsx";
 import { useMap } from "react-leaflet";
 import { ScrollArea } from "@/components/ui/scroll-area.tsx";
@@ -9,24 +8,15 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet.tsx";
+import {MapContext} from "@/context/MapProvider.tsx";
+import {useContext} from "react";
 
-export default function Results({
-  tabActive,
-  isOpen,
-  setIsOpen,
-  practitioners,
-  establishments,
-}: {
-  tabActive: "practitioner" | "establishment";
-  isOpen: boolean;
-  setIsOpen: (isOpen: boolean) => void;
-  practitioners: Partial<Practitioner>[];
-  establishments: Partial<Establishment>[];
-}) {
+export default function Results() {
   const map = useMap();
+  const {isResultsOpen, setIsResultsOpen, tabActive, practitioners, establishments} = useContext(MapContext);
 
   return (
-    <Sheet open={isOpen} onOpenChange={setIsOpen}>
+    <Sheet open={isResultsOpen} onOpenChange={setIsResultsOpen}>
       <SheetContent side={"bottom"}>
         {tabActive === "practitioner" ? (
           <SheetHeader>
@@ -73,7 +63,7 @@ export default function Results({
                           if (!map) return;
                           if (!latitude || !longitude) return;
 
-                          setIsOpen(false);
+                          setIsResultsOpen(false);
                           map.setView([latitude, longitude], 28);
                         }}
                       >
@@ -95,7 +85,7 @@ export default function Results({
                           if (!map) return;
                           if (!latitude || !longitude) return;
 
-                          setIsOpen(false);
+                          setIsResultsOpen(false);
                           map.setView([latitude, longitude], 28);
                         }}
                       >

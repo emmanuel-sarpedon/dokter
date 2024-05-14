@@ -4,44 +4,16 @@ import { MapContainer, TileLayer } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import "leaflet-defaulticon-compatibility";
 import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css";
+import { useContext } from "react";
+import { MapContext } from "@/context/MapProvider.tsx";
+import ActionButtons from "@/components/ActionButtons.tsx";
 import PractitionerMarkers from "@/components/PractitionerMarkers.tsx";
 import SearchEngine from "@/components/SearchEngine.tsx";
-import { usePractitioners } from "@/hooks/usePractitioners.ts";
-import { useFields } from "@/hooks/useFields.ts";
+import EstablishmentMarkers from "@/components/EstablishmentMarkers.tsx";
 import Results from "@/components/Results.tsx";
-import { useEffect, useState } from "react";
-import ActionButtons from "@/components/ActionButtons.tsx";
-import useEstablishments from "@/hooks/useEstablishments.ts";
-import EstablishementMarkers from "@/components/EstablishementMarkers.tsx";
 
 export default function Map() {
-  const [isMenuOpened, setIsMenuOpened] = useState(true);
-  const [isFiltersSheetOpened, setIsFiltersSheetOpened] = useState(true);
-  const [isResultsOpen, setIsResultsOpen] = useState(false);
-  const [isSatelliteMode, setIsSatelliteMode] = useState(false);
-
-  const [tabActive, setTabActive] = useState<"practitioner" | "establishment">(
-    "practitioner",
-  );
-
-  const { isFetchingPractitioner, practitioners, handleFetchPractitioners } =
-    usePractitioners();
-
-  const {
-    isFetchingEstablishments,
-    establishments,
-    handleFetchEstablishments,
-  } = useEstablishments();
-
-  const fields = useFields();
-
-  useEffect(() => {
-    if (isResultsOpen) document.body.style.overflow = "hidden";
-
-    return () => {
-      document.body.style.overflow = "auto";
-    };
-  }, [isResultsOpen]);
+  const { isSatelliteMode, tabActive } = useContext(MapContext);
 
   return (
     <MapContainer
@@ -60,47 +32,16 @@ export default function Map() {
         }
       />
 
-      <ActionButtons
-        tabActive={tabActive}
-        isMenuOpened={isMenuOpened}
-        setIsMenuOpened={setIsMenuOpened}
-        isSatelliteMode={isSatelliteMode}
-        setIsSatelliteMode={setIsSatelliteMode}
-        setIsFiltersSheetOpened={setIsFiltersSheetOpened}
-        setIsResultsOpen={setIsResultsOpen}
-        practitioners={practitioners}
-        establishments={establishments}
-      />
+      <ActionButtons />
 
       {tabActive === "practitioner" ? (
-        <PractitionerMarkers practitioners={practitioners} />
+        <PractitionerMarkers />
       ) : (
-        <EstablishementMarkers establishments={establishments} />
+        <EstablishmentMarkers />
       )}
 
-      <SearchEngine
-        isOpened={isFiltersSheetOpened}
-        setIsOpened={setIsFiltersSheetOpened}
-        tabActive={tabActive}
-        setTabActive={setTabActive}
-        setIsMenuOpened={setIsMenuOpened}
-        setIsResultsOpen={setIsResultsOpen}
-        fieldsRecords={fields}
-        isFetchingPractitioner={isFetchingPractitioner}
-        practitioners={practitioners}
-        handleFetchPractitioners={handleFetchPractitioners}
-        isFetchingEstablishment={isFetchingEstablishments}
-        establishments={establishments}
-        handleFetchEstablishments={handleFetchEstablishments}
-      />
-
-      <Results
-        tabActive={tabActive}
-        setIsOpen={setIsResultsOpen}
-        isOpen={isResultsOpen}
-        practitioners={practitioners}
-        establishments={establishments}
-      />
+      <SearchEngine />
+      <Results />
     </MapContainer>
   );
 }

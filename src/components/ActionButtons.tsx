@@ -2,33 +2,25 @@ import { GlobeIcon } from "@radix-ui/react-icons";
 import { Button } from "@/components/ui/button.tsx";
 import { useUserLocation } from "@/hooks/useUserLocation.ts";
 import { useMap } from "react-leaflet";
-import { Establishment, Practitioner } from "@prisma/client";
 import { Switch } from "@/components/ui/switch.tsx";
 import { Label } from "@/components/ui/label.tsx";
 import { cn } from "@/lib/utils.ts";
+import { useContext } from "react";
+import { MapContext } from "@/context/MapProvider.tsx";
 
-export default function ActionButtons({
-  tabActive,
-  isMenuOpened,
-  setIsMenuOpened,
-  isSatelliteMode,
-  setIsSatelliteMode,
-  setIsFiltersSheetOpened,
-  setIsResultsOpen,
-  practitioners,
-  establishments,
-}: {
-  tabActive: "practitioner" | "establishment";
-  isMenuOpened: boolean;
-  setIsMenuOpened: (isMenuOpened: boolean) => void;
-  isSatelliteMode: boolean;
-  setIsSatelliteMode: (isSatelliteMode: boolean) => void;
-  setIsFiltersSheetOpened: (isOpen: boolean) => void;
-  setIsResultsOpen: (isOpen: boolean) => void;
-  practitioners: Partial<Practitioner>[];
-  establishments: Partial<Establishment>[];
-}) {
+export default function ActionButtons() {
   const map = useMap();
+  const {
+    isSatelliteMode,
+    isMenuOpened,
+    setIsMenuOpened,
+    setIsSatelliteMode,
+    setIsFiltersSheetOpened,
+    setIsResultsOpen,
+    tabActive,
+    practitioners,
+    establishments,
+  } = useContext(MapContext);
   const { handleUserLocationAsk } = useUserLocation();
 
   const handleClick = () => {

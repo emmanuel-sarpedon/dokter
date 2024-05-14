@@ -4,30 +4,26 @@ import { CircleMarker, Popup } from "react-leaflet";
 import Link from "next/link";
 import { ExternalLinkIcon } from "@radix-ui/react-icons";
 import { P } from "@/components/Typography.tsx";
-import { Establishment } from "@prisma/client";
 import colors from "tailwindcss/colors";
 import MarkerClusterGroup from "react-leaflet-cluster";
+import { MapContext } from "@/context/MapProvider.tsx";
+import { useContext } from "react";
 
-const PractitionerMarkers = ({
-  establishments,
-}: {
-  establishments: Partial<Establishment>[];
-}) => {
+const EstablishmentMarkers = () => {
+  const { establishments } = useContext(MapContext);
+
   return (
     <MarkerClusterGroup chunkedLoading>
       {establishments?.map(
-        (
-          {
-            id,
-            name_long,
-            category_libelle,
-            address,
-            tel,
-            longitude,
-            latitude,
-          },
-          i,
-        ) =>
+        ({
+          id,
+          name_long,
+          category_libelle,
+          address,
+          tel,
+          longitude,
+          latitude,
+        }) =>
           latitude && longitude ? (
             <CircleMarker
               key={id}
@@ -63,4 +59,4 @@ const PractitionerMarkers = ({
   );
 };
 
-export default PractitionerMarkers;
+export default EstablishmentMarkers;

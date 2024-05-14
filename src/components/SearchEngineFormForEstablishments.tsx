@@ -1,6 +1,3 @@
-import { z } from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { ScrollArea } from "@/components/ui/scroll-area.tsx";
 import {
   Form,
@@ -18,46 +15,21 @@ import {
 } from "@/components/ui/select.tsx";
 import { Input } from "@/components/ui/input.tsx";
 import { Button } from "@/components/ui/button.tsx";
+import { useContext } from "react";
+import { MapContext } from "@/context/MapProvider.tsx";
 
-const SearchEngineFormForEstablishments = ({
-  setIsOpened,
-  setIsResultsOpen,
-  fieldsRecords,
-  isFetchingEstablishment,
-  handleFetchEstablishments,
-}: {
-  setIsOpened: (isOpen: boolean) => void;
-  setIsResultsOpen: (isOpen: boolean) => void;
-  fieldsRecords: Fields;
-  isFetchingEstablishment: boolean;
-  handleFetchEstablishments: (
-    filters: Record<string, unknown>,
-  ) => Promise<void>;
-}) => {
-  const { categories, cities } = fieldsRecords;
+const SearchEngineFormForEstablishments = () => {
+  const {
+    fields,
+    isFetchingEstablishments,
+    formForEstablishmentSearchEngine,
+    handleSubmitEstablishmentSearchEngine,
+  } = useContext(MapContext);
+  const { categories, cities } = fields;
 
-  const formSchema = z.object({
-    category: z.string().optional(),
-    name: z.string().optional(),
-    city: z.string().optional(),
-    finess: z.string().optional(),
-    siret: z.string().optional(),
-  });
-
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-  });
-
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    handleFetchEstablishments({ ...values }).then(() => {
-      setIsOpened(false);
-      setIsResultsOpen(true);
-    });
-  }
-
-  const fields: {
+  const fieldsInput: {
     label: string;
-    name: keyof z.infer<typeof formSchema>;
+    name: string;
     options: { id: number; libelle: string }[] | null;
   }[] = [
     {
@@ -71,25 +43,29 @@ const SearchEngineFormForEstablishments = ({
     { label: "Siret", name: "siret", options: null },
   ];
 
+  if (!formForEstablishmentSearchEngine) return null;
+
   return (
     <ScrollArea className={"h-full"}>
-      <Form {...form}>
+      <Form {...formForEstablishmentSearchEngine}>
         <form
           className={"py-4 flex flex-col gap-2 sm:gap-2 px-2"}
-          onSubmit={form.handleSubmit(onSubmit)}
+          onSubmit={formForEstablishmentSearchEngine.handleSubmit(
+            handleSubmitEstablishmentSearchEngine,
+          )}
         >
-          {fields.map(({ label, name, options }) => {
+          {fieldsInput.map(({ label, name, options }) => {
             return (
               <FormField
                 key={label}
-                control={form.control}
+                control={formForEstablishmentSearchEngine.control}
                 name={name}
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>{label}</FormLabel>
                     {options ? (
                       <Select
-                        disabled={isFetchingEstablishment}
+                        disabled={isFetchingEstablishments}
                         onValueChange={field.onChange}
                         defaultValue={field.value}
                       >
@@ -108,7 +84,7 @@ const SearchEngineFormForEstablishments = ({
                       </Select>
                     ) : (
                       <FormControl>
-                        <Input {...field} disabled={isFetchingEstablishment} />
+                        <Input {...field} disabled={isFetchingEstablishments} />
                       </FormControl>
                     )}
                   </FormItem>
