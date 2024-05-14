@@ -25,7 +25,12 @@ export default function ActionButtons({
   practitioners: Partial<Practitioner>[];
 }) {
   const map = useMap();
-  const userLocation = useUserLocation();
+  const { handleUserLocationAsk } = useUserLocation();
+
+  const handleClick = () => {
+    const userLocation = handleUserLocationAsk();
+    if (userLocation) map.setView(userLocation, 15);
+  };
 
   return (
     <menu
@@ -71,12 +76,7 @@ export default function ActionButtons({
           {`Voir les résultats (${practitioners.length})`}
         </Button>
 
-        <Button
-          disabled={!userLocation}
-          variant={"ghost"}
-          onClick={() => userLocation && map.setView(userLocation, 15)}
-          className={cn({ invisible: !userLocation })}
-        >
+        <Button variant={"ghost"} onClick={handleClick}>
           <GlobeIcon className={"mr-2 h-4 w-4"} />
           Zoomer sur ma position
         </Button>

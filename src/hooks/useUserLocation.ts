@@ -1,17 +1,21 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { LatLngTuple } from "leaflet";
 
 export const useUserLocation = () => {
   const [userLocation, setUserLocation] = useState<LatLngTuple | null>(null);
 
-  useEffect(() => {
-    if (!navigator.geolocation) return;
+  const handleUserLocationAsk: () => LatLngTuple | null = useCallback(() => {
+    if (userLocation) return userLocation;
 
     navigator.geolocation.getCurrentPosition((position) => {
       const { latitude, longitude } = position.coords;
       setUserLocation([latitude, longitude]);
-    });
-  }, []);
 
-  return userLocation;
+      return [latitude, longitude];
+    });
+
+    return null;
+  }, [userLocation]);
+
+  return { handleUserLocationAsk };
 };

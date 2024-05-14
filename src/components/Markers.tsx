@@ -1,13 +1,12 @@
 "use client";
 
-import { CircleMarker, Marker, Popup, useMap } from "react-leaflet";
+import { CircleMarker, Popup } from "react-leaflet";
 import Link from "next/link";
 import { ExternalLinkIcon } from "@radix-ui/react-icons";
 import { P } from "@/components/Typography.tsx";
-import { useUserLocation } from "@/hooks/useUserLocation.ts";
 import { Practitioner } from "@prisma/client";
 import colors from "tailwindcss/colors";
-import { useEffect } from "react";
+import MarkerClusterGroup from "react-leaflet-cluster";
 
 const Markers = ({
   practitioners,
@@ -15,15 +14,8 @@ const Markers = ({
   fieldsRecords: Fields;
   practitioners: Partial<Practitioner>[];
 }) => {
-  const map = useMap();
-  const userLocation = useUserLocation();
-
-  useEffect(() => {
-    if (userLocation) map.setView(userLocation, 12);
-  }, [map, userLocation]);
-
   return (
-    <>
+    <MarkerClusterGroup chunkedLoading>
       {practitioners?.map(
         ({ name, profession, address, tel, longitude, latitude }, i) =>
           latitude && longitude ? (
@@ -47,11 +39,7 @@ const Markers = ({
                 ) : null}
                 <Link
                   className={"flex items-center p-1"}
-                  href={
-                    userLocation
-                      ? `https://www.google.com/maps/dir/${latitude},${longitude}/${userLocation[0]},${userLocation[1]}`
-                      : `https://www.google.com/maps/place/${latitude},${longitude}`
-                  }
+                  href={`https://www.google.com/maps/place/${latitude},${longitude}`}
                   target={"_blank"}
                 >
                   <ExternalLinkIcon className={"mr-2 h-4 w-4"} />
@@ -61,13 +49,7 @@ const Markers = ({
             </CircleMarker>
           ) : null,
       )}
-
-      {userLocation && (
-        <Marker position={userLocation}>
-          <Popup>{"Vous êtes ici"}</Popup>
-        </Marker>
-      )}
-    </>
+    </MarkerClusterGroup>
   );
 };
 
