@@ -69,7 +69,7 @@ export default function SearchEngineFormForPractitioners({
     <ScrollArea className={"h-full"}>
       <Form {...form}>
         <form
-          className={"py-4 flex flex-col gap-4 px-2"}
+          className={"py-4 flex flex-col gap-2 sm:gap-2 px-2"}
           onSubmit={form.handleSubmit(onSubmit)}
         >
           {fields.map(({ label, name, options }) => {
@@ -80,7 +80,7 @@ export default function SearchEngineFormForPractitioners({
                 name={name}
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className={"hidden sm:block"}>{label}</FormLabel>
+                    <FormLabel>{label}</FormLabel>
                     <Select
                       disabled={isFetchingPractitioner}
                       onValueChange={field.onChange}

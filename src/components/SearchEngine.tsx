@@ -11,6 +11,7 @@ import { Establishment, Practitioner } from "@prisma/client";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import SearchEngineFormForPractitioners from "@/components/SearchEngineFormForPractitioners.tsx";
 import SearchEngineFormForEstablishments from "@/components/SearchEngineFormForEstablishments.tsx";
+import { P } from "@/components/Typography.tsx";
 
 const SearchEngine = ({
   ...props
@@ -40,7 +41,7 @@ const SearchEngine = ({
           <SheetTitle>
             {"Recherche de praticiens et d'établissements"}
           </SheetTitle>
-          <SheetDescription>
+          <SheetDescription className={"hidden md:block"}>
             {
               "Filter profession, type d'acte pratiqué, commune, établissements, etc."
             }
@@ -54,13 +55,11 @@ const SearchEngine = ({
             setTabActive(value as "practitioner" | "establishment")
           }
         >
+          <P bold={true}>Je recherche...</P>
+
           <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="practitioner">
-              Je cherche un praticien
-            </TabsTrigger>
-            <TabsTrigger value="establishment">
-              Je cherche un établissement
-            </TabsTrigger>
+            <TabsTrigger value="practitioner">...un praticien</TabsTrigger>
+            <TabsTrigger value="establishment">...un établissement</TabsTrigger>
           </TabsList>
           <TabsContent value={"practitioner"}>
             <SearchEngineFormForPractitioners {...props} />

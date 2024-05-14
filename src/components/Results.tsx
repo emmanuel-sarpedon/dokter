@@ -68,7 +68,7 @@ export default function Results({
                     return (
                       <div
                         key={id}
-                        className={"p-3 hover:cursor-pointer"}
+                        className={"md:p-3 hover:cursor-pointer"}
                         onClick={() => {
                           if (!map) return;
                           if (!latitude || !longitude) return;
