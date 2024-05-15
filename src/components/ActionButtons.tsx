@@ -25,6 +25,7 @@ export default function ActionButtons() {
     setIsFiltersSheetOpened,
     setIsResultsOpen,
     tabActive,
+    setTabActive,
     practitioners,
     establishments,
     userLocation,
@@ -49,16 +50,62 @@ export default function ActionButtons() {
         }
       >
         <MenubarMenu>
-          <MenubarTrigger className={"font-bold"}>Recherche</MenubarTrigger>
+          <MenubarTrigger className={"font-bold"}>Ma recherche</MenubarTrigger>
 
           <MenubarContent>
-            <MenubarItem
-              onClick={() => setIsFiltersSheetOpened(true)}
-            >{`Filter les résultats (${numberOfResults})`}</MenubarItem>
+            <MenubarCheckboxItem
+              checked={tabActive === "practitioner"}
+              onCheckedChange={(bool) =>
+                bool
+                  ? setTabActive("practitioner")
+                  : setTabActive("establishment")
+              }
+            >
+              Praticiens 🧑‍⚕️
+            </MenubarCheckboxItem>
+            <MenubarCheckboxItem
+              checked={tabActive !== "practitioner"}
+              onCheckedChange={(bool) =>
+                bool
+                  ? setTabActive("establishment")
+                  : setTabActive("practitioner")
+              }
+            >
+              Établissements 🏥
+            </MenubarCheckboxItem>
             <MenubarSeparator />
-            <MenubarItem
-              onClick={() => setIsResultsOpen(true)}
-            >{`Lister tous les résultats (${numberOfResults})`}</MenubarItem>
+
+            <MenubarSub>
+              <MenubarSubTrigger>
+                Lister les résultats de recherche...
+              </MenubarSubTrigger>
+
+              <MenubarSubContent>
+                <MenubarItem
+                  onClick={() => {
+                    setTabActive("practitioner");
+                    setIsResultsOpen(true);
+                  }}
+                >
+                  ...de praticiens
+                </MenubarItem>
+
+                <MenubarItem
+                  onClick={() => {
+                    setTabActive("establishment");
+                    setIsResultsOpen(true);
+                  }}
+                >
+                  ...d'établissements
+                </MenubarItem>
+              </MenubarSubContent>
+            </MenubarSub>
+
+            <MenubarSeparator />
+
+            <MenubarItem onClick={() => setIsFiltersSheetOpened(true)}>
+              {"Filtres avancés"}
+            </MenubarItem>
           </MenubarContent>
         </MenubarMenu>
 

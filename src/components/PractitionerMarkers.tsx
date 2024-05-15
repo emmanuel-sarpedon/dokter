@@ -17,7 +17,7 @@ import { MapContext } from "@/context/MapProvider.tsx";
 import { getEmoji } from "@/lib/getEmoji.ts";
 
 const PractitionerMarkers = () => {
-  const { practitioners, fields, setPractitionerProfessionFilter } =
+  const { practitioners, fields, setPractitionerProfessionFilter, practitionerProfessionFilter } =
     useContext(MapContext);
   const { professions } = fields;
 
@@ -27,9 +27,9 @@ const PractitionerMarkers = () => {
         {professions.map((p) => {
           return (
             <LayersControl.Overlay
-              name={`${p.libelle} (${practitioners.filter(({ profession }) => profession === p.libelle).length})`}
+              name={`${p.libelle} ${getEmoji(p.libelle)}`}
               key={p.id}
-              checked
+              checked={practitionerProfessionFilter.includes(p.libelle)}
             >
               <LayerGroup
                 eventHandlers={{

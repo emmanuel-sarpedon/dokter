@@ -23,6 +23,7 @@ const SearchEngineFormForEstablishments = () => {
     isFetchingEstablishments,
     formForEstablishmentSearchEngine,
     handleSubmitEstablishmentSearchEngine,
+    setEstablishmentCategoryFilter,
   } = useContext(MapContext);
   const { categories, cities } = fields;
 
@@ -106,6 +107,10 @@ const SearchEngineFormForEstablishments = () => {
                 (field) => {
                   formForEstablishmentSearchEngine.setValue(field, "");
                 },
+              );
+
+              setEstablishmentCategoryFilter(
+                categories.map(({ libelle }) => libelle),
               );
             }}
           >

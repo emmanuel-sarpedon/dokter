@@ -22,6 +22,7 @@ export default function SearchEngineFormForPractitioners() {
     isFetchingPractitioner,
     formForPractitionerSearchEngine,
     handleSubmitPractitionerSearchEngine,
+    setPractitionerProfessionFilter,
   } = useContext(MapContext);
 
   const { professions, procedures, sesamVitales, cities, agreements } = fields;
@@ -96,6 +97,10 @@ export default function SearchEngineFormForPractitioners() {
                 (field) => {
                   formForPractitionerSearchEngine.setValue(field, "");
                 },
+              );
+
+              setPractitionerProfessionFilter(
+                professions.map(({ libelle }) => libelle),
               );
             }}
           >

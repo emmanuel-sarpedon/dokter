@@ -27,7 +27,7 @@ const EstablishmentMarkers = () => {
         {categories.map((c) => {
           return (
             <LayersControl.Overlay
-              name={`${c.libelle} (${establishments.filter(({ category_libelle }) => category_libelle === c.libelle).length})`}
+              name={`${c.libelle}`}
               key={c.id}
               checked
             >
