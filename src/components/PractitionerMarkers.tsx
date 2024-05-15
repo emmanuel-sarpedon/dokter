@@ -1,24 +1,28 @@
 "use client";
 
 import {
-  CircleMarker,
   Popup,
   Tooltip,
   LayersControl,
   LayerGroup,
+  Marker,
 } from "react-leaflet";
 import Link from "next/link";
 import { ExternalLinkIcon } from "@radix-ui/react-icons";
 import { P } from "@/components/Typography.tsx";
-import colors from "tailwindcss/colors";
 import MarkerClusterGroup from "react-leaflet-cluster";
 import { Fragment, useContext } from "react";
 import { MapContext } from "@/context/MapProvider.tsx";
 import { getEmoji } from "@/lib/getEmoji.ts";
+import L from "leaflet";
 
 const PractitionerMarkers = () => {
-  const { practitioners, fields, setPractitionerProfessionFilter, practitionerProfessionFilter } =
-    useContext(MapContext);
+  const {
+    practitioners,
+    fields,
+    setPractitionerProfessionFilter,
+    practitionerProfessionFilter,
+  } = useContext(MapContext);
   const { professions } = fields;
 
   return (
@@ -55,18 +59,20 @@ const PractitionerMarkers = () => {
           {practitioners?.map(
             ({ id, name, profession, address, tel, longitude, latitude }) =>
               latitude && longitude ? (
-                <CircleMarker
+                <Marker
                   key={id}
-                  center={[latitude, longitude]}
-                  radius={5}
-                  color={colors.red[500]}
-                  className={"relative"}
+                  position={[latitude, longitude]}
+                  icon={L.icon({
+                    iconUrl: "/user-doctor.svg",
+                    iconSize: [30, 30],
+                  })}
                 >
                   <Tooltip
+                    className={"font-bold"}
                     permanent
-                    direction={"top"}
-                    offset={[0, -10]}
-                  >{`DR ${name}, ${getEmoji(profession)} ${profession} `}</Tooltip>
+                    direction={"bottom"}
+                    offset={[0, 20]}
+                  >{`${getEmoji(profession)} ${profession} `}</Tooltip>
 
                   <Popup>
                     <P
@@ -88,8 +94,9 @@ const PractitionerMarkers = () => {
                       Itinéraire Google Maps
                     </Link>
                   </Popup>
-                </CircleMarker>
-              ) : null,
+                </Marker>
+              ) : // </CircleMarker>
+              null,
           )}
         </MarkerClusterGroup>
       </LayersControl>

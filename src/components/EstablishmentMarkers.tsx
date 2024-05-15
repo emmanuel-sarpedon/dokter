@@ -1,20 +1,19 @@
 "use client";
 
 import {
-  CircleMarker,
   LayerGroup,
   LayersControl,
+  Marker,
   Popup,
   Tooltip,
 } from "react-leaflet";
 import Link from "next/link";
 import { ExternalLinkIcon } from "@radix-ui/react-icons";
 import { P } from "@/components/Typography.tsx";
-import colors from "tailwindcss/colors";
 import MarkerClusterGroup from "react-leaflet-cluster";
 import { MapContext } from "@/context/MapProvider.tsx";
 import { Fragment, useContext } from "react";
-import { getEmoji } from "@/lib/getEmoji.ts";
+import L from "leaflet";
 
 const EstablishmentMarkers = () => {
   const { establishments, fields, setEstablishmentCategoryFilter } =
@@ -26,11 +25,7 @@ const EstablishmentMarkers = () => {
       <LayersControl>
         {categories.map((c) => {
           return (
-            <LayersControl.Overlay
-              name={`${c.libelle}`}
-              key={c.id}
-              checked
-            >
+            <LayersControl.Overlay name={`${c.libelle}`} key={c.id} checked>
               <LayerGroup
                 eventHandlers={{
                   add: () =>
@@ -64,18 +59,20 @@ const EstablishmentMarkers = () => {
             latitude,
           }) =>
             latitude && longitude ? (
-              <CircleMarker
+              <Marker
                 key={id}
-                center={[latitude, longitude]}
-                radius={5}
-                color={colors.blue[500]}
-                className={"relative"}
+                position={[latitude, longitude]}
+                icon={L.icon({
+                  iconUrl: "/hospital.svg",
+                  iconSize: [30, 30],
+                })}
               >
                 <Tooltip
+                  className={"font-bold"}
                   permanent
-                  direction={"top"}
-                  offset={[0, -10]}
-                >{`${name_long}`}</Tooltip>
+                  direction={"bottom"}
+                  offset={[0, 20]}
+                >{`${category_libelle}`}</Tooltip>
 
                 <Popup>
                   <P
@@ -97,7 +94,7 @@ const EstablishmentMarkers = () => {
                     Itinéraire Google Maps
                   </Link>
                 </Popup>
-              </CircleMarker>
+              </Marker>
             ) : null,
         )}
       </MarkerClusterGroup>
