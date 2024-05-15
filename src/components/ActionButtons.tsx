@@ -1,5 +1,5 @@
 import { useMap } from "react-leaflet";
-import { useContext, useMemo } from "react";
+import { useContext } from "react";
 import { MapContext } from "@/context/MapProvider.tsx";
 import {
   Menubar,
@@ -26,8 +26,6 @@ export default function ActionButtons() {
     setIsResultsOpen,
     tabActive,
     setTabActive,
-    practitioners,
-    establishments,
     userLocation,
     getUserLocation,
   } = useContext(MapContext);
