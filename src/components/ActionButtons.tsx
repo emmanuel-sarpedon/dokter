@@ -32,12 +32,6 @@ export default function ActionButtons() {
     getUserLocation,
   } = useContext(MapContext);
 
-  const numberOfResults = useMemo(() => {
-    return tabActive === "practitioner"
-      ? practitioners.length
-      : establishments.length;
-  }, [tabActive, practitioners.length, establishments.length]);
-
   const isMac =
     typeof window !== "undefined" &&
     navigator.userAgent.toLowerCase().includes("mac");
