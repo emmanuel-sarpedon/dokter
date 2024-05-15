@@ -1,4 +1,11 @@
-import { createContext, PropsWithChildren, useState } from "react";
+import {
+  createContext,
+  Dispatch,
+  PropsWithChildren,
+  SetStateAction,
+  useEffect,
+  useState,
+} from "react";
 import { usePractitioners } from "@/hooks/usePractitioners.ts";
 import useEstablishments from "@/hooks/useEstablishments.ts";
 import { useFields } from "@/hooks/useFields.ts";
@@ -20,7 +27,9 @@ export const MapContext = createContext({
   practitioners: [] as Partial<Practitioner>[],
   establishments: [] as Partial<Establishment>[], 
   userLocation: null as null | LatLngTuple,
-
+  practitionerProfessionFilter: [] as string[],
+  establishmentCategoryFilter: [] as string[],
+  
   fields: {
     professions: [],
     procedures: [],
@@ -30,10 +39,12 @@ export const MapContext = createContext({
     categories: [],
   } as Fields,
 
-  setIsFiltersSheetOpened: (_: boolean) => {},
-  setIsResultsOpen: (_: boolean) => {},
-  setIsSatelliteMode: (_: boolean) => {},
-  setTabActive: (_: "practitioner" | "establishment") => {},
+  setIsFiltersSheetOpened: ((_: boolean) => {}) as Dispatch<SetStateAction<boolean>>,
+  setIsResultsOpen: ((_: boolean) => {}) as Dispatch<SetStateAction<boolean>>,
+  setIsSatelliteMode: ((_: boolean) => {}) as Dispatch<SetStateAction<boolean>>,
+  setTabActive: ((_: "practitioner" | "establishment") => {}) as Dispatch<SetStateAction<"practitioner" | "establishment">>,
+  setPractitionerProfessionFilter: ((_: string[]) => {}) as Dispatch<SetStateAction<string[]>>,
+  setEstablishmentCategoryFilter: ((_: string[]) => {}) as Dispatch<SetStateAction<string[]>>,
 
   handleFetchPractitioners: async (_: Record<string, unknown>,): Promise<void> => {},
   handleFetchEstablishments: async (_: Record<string, unknown>,): Promise<void> => {},
@@ -46,27 +57,27 @@ export const MapContext = createContext({
   getUserLocation: async (): Promise<LatLngTuple | void> => {},
 });
 
+// prettier-ignore
 export const MapProvider = ({ children }: PropsWithChildren) => {
-  const [isFiltersSheetOpened, setIsFiltersSheetOpened] = useState(true);
+  const [isFiltersSheetOpened, setIsFiltersSheetOpened] = useState(false);
   const [isResultsOpen, setIsResultsOpen] = useState(false);
   const [isSatelliteMode, setIsSatelliteMode] = useState(false);
+  const [practitionerProfessionFilter, setPractitionerProfessionFilter] = useState<string[]>([]);
+  const [establishmentCategoryFilter, setEstablishmentCategoryFilter] = useState<string[]>([]);
+  const [tabActive, setTabActive] = useState<TabActive>("practitioner");
 
-  const [tabActive, setTabActive] = useState<"practitioner" | "establishment">(
-    "practitioner",
-  );
-
-  const { isFetchingPractitioner, practitioners, handleFetchPractitioners } =
-    usePractitioners();
-
+  const { isFetchingPractitioner, practitioners, handleFetchPractitioners } = usePractitioners();
+  const { isFetchingEstablishments, establishments, handleFetchEstablishments } = useEstablishments();
   const { userLocation, getUserLocation } = useUserLocation();
-
-  const {
-    isFetchingEstablishments,
-    establishments,
-    handleFetchEstablishments,
-  } = useEstablishments();
-
   const fields = useFields();
+
+  useEffect(() => {
+    setPractitionerProfessionFilter(fields.professions.map(({ libelle }) => libelle));
+  }, [fields.professions]);
+
+  useEffect(() => {
+    setEstablishmentCategoryFilter(fields.categories.map(({ libelle }) => libelle));
+  }, [fields.categories]);
 
   const formSchemaForPractitioner = z.object({
     profession: z.string().optional(),
@@ -137,15 +148,26 @@ export const MapProvider = ({ children }: PropsWithChildren) => {
         isFetchingPractitioner,
         isFetchingEstablishments,
         tabActive,
-        practitioners,
-        establishments,
+        practitioners: practitioners.filter(
+          ({ profession }) =>
+            profession && practitionerProfessionFilter.includes(profession),
+        ),
+        establishments: establishments.filter(
+          ({ category_libelle }) =>
+            category_libelle &&
+            establishmentCategoryFilter.includes(category_libelle),
+        ),
         fields,
         userLocation,
+        practitionerProfessionFilter,
+        establishmentCategoryFilter,
 
         setIsFiltersSheetOpened,
         setIsResultsOpen,
         setIsSatelliteMode,
         setTabActive,
+        setPractitionerProfessionFilter,
+        setEstablishmentCategoryFilter,
 
         handleFetchPractitioners,
         handleFetchEstablishments,
@@ -162,3 +184,5 @@ export const MapProvider = ({ children }: PropsWithChildren) => {
     </MapContext.Provider>
   );
 };
+
+type TabActive = "practitioner" | "establishment";

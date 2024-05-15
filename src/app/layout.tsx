@@ -18,10 +18,12 @@ export const metadata = {
 export default function RootLayout({
   children,
 }: Readonly<{ children: ReactNode }>) {
+  const isDev = process.env.NODE_ENV === "development";
+
   return (
     <html lang="fr">
-      <GoogleTagManager gtmId={"GTM-M8TDMF57"} />
-      <GoogleAnalytics gaId={"G-6G4V712XV5"} />
+      {isDev ? null : <GoogleTagManager gtmId={"GTM-M8TDMF57"} />}
+      {isDev ? null : <GoogleAnalytics gaId={"G-6G4V712XV5"} />}
 
       <body className={cn(DosisFont.variable, "font-dosis min-h-dvh")}>
         {children}

@@ -20,6 +20,7 @@ export default function Map() {
       zoomControl={false}
       center={userLocation || [-20.890314391551765, 55.51186605492485]} // default position on Reunion Island
       zoom={14}
+      minZoom={11}
       scrollWheelZoom={true}
       className={"w-full h-full"}
     >
