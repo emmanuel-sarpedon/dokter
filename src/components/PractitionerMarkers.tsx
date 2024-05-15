@@ -55,7 +55,7 @@ const PractitionerMarkers = () => {
           );
         })}
 
-        <MarkerClusterGroup chunkedLoading>
+        <MarkerClusterGroup chunkedLoading spiderfyDistanceMultiplier={3}>
           {practitioners?.map(
             ({ id, name, profession, address, tel, longitude, latitude }) =>
               latitude && longitude ? (
@@ -95,8 +95,7 @@ const PractitionerMarkers = () => {
                     </Link>
                   </Popup>
                 </Marker>
-              ) : // </CircleMarker>
-              null,
+              ) : null,
           )}
         </MarkerClusterGroup>
       </LayersControl>

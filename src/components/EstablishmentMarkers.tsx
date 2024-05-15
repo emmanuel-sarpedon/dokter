@@ -47,7 +47,7 @@ const EstablishmentMarkers = () => {
         })}
       </LayersControl>
 
-      <MarkerClusterGroup chunkedLoading>
+      <MarkerClusterGroup chunkedLoading spiderfyDistanceMultiplier={3}>
         {establishments?.map(
           ({
             id,
