@@ -1,6 +1,6 @@
 {
   "name": "dokter.re",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "private": true,
   "scripts": {
     "dev": "dotenv -e .env.local next dev --turbo",
