@@ -87,7 +87,7 @@ export default function ActionButtons() {
                     setIsResultsOpen(true);
                   }}
                 >
-                  ...de praticiens
+                  {"...de praticiens"}
                 </MenubarItem>
 
                 <MenubarItem
@@ -96,7 +96,7 @@ export default function ActionButtons() {
                     setIsResultsOpen(true);
                   }}
                 >
-                  ...d'établissements
+                  {"...d'établissements"}
                 </MenubarItem>
               </MenubarSubContent>
             </MenubarSub>
