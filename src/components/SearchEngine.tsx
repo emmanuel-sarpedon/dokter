@@ -24,7 +24,7 @@ const SearchEngine = () => {
 
   return (
     <Sheet open={isFiltersSheetOpened} onOpenChange={setIsFiltersSheetOpened}>
-      <SheetContent>
+      <SheetContent className={"overflow-scroll"}>
         <SheetHeader>
           <SheetTitle>
             {"Recherche de praticiens et d'établissements"}

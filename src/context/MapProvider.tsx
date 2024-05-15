@@ -6,10 +6,11 @@ import { Establishment, Practitioner } from "@prisma/client";
 import { useForm, UseFormReturn } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { LatLngTuple } from "leaflet";
+import { useUserLocation } from "@/hooks/useUserLocation.ts";
 
 // prettier-ignore
 export const MapContext = createContext({
-  isMenuOpened: false,
   isFiltersSheetOpened: false,
   isResultsOpen: false,
   isSatelliteMode: false,
@@ -17,7 +18,8 @@ export const MapContext = createContext({
   isFetchingEstablishments: false,
   tabActive: "practitioner",
   practitioners: [] as Partial<Practitioner>[],
-  establishments: [] as Partial<Establishment>[],
+  establishments: [] as Partial<Establishment>[], 
+  userLocation: null as null | LatLngTuple,
 
   fields: {
     professions: [],
@@ -28,7 +30,6 @@ export const MapContext = createContext({
     categories: [],
   } as Fields,
 
-  setIsMenuOpened: (_: boolean) => {},
   setIsFiltersSheetOpened: (_: boolean) => {},
   setIsResultsOpen: (_: boolean) => {},
   setIsSatelliteMode: (_: boolean) => {},
@@ -42,10 +43,10 @@ export const MapContext = createContext({
   handleSubmitPractitionerSearchEngine: (_: Record<string, unknown>,): void => {},
   handleSubmitEstablishmentSearchEngine: (_: Record<string, unknown>,): void => {},
 
+  getUserLocation: async (): Promise<LatLngTuple | void> => {},
 });
 
 export const MapProvider = ({ children }: PropsWithChildren) => {
-  const [isMenuOpened, setIsMenuOpened] = useState(true);
   const [isFiltersSheetOpened, setIsFiltersSheetOpened] = useState(true);
   const [isResultsOpen, setIsResultsOpen] = useState(false);
   const [isSatelliteMode, setIsSatelliteMode] = useState(false);
@@ -56,6 +57,8 @@ export const MapProvider = ({ children }: PropsWithChildren) => {
 
   const { isFetchingPractitioner, practitioners, handleFetchPractitioners } =
     usePractitioners();
+
+  const { userLocation, getUserLocation } = useUserLocation();
 
   const {
     isFetchingEstablishments,
@@ -85,12 +88,26 @@ export const MapProvider = ({ children }: PropsWithChildren) => {
     z.infer<typeof formSchemaForPractitioner>
   >({
     resolver: zodResolver(formSchemaForPractitioner),
+    defaultValues: {
+      profession: "",
+      procedure: "",
+      sesamVitale: "",
+      city: "",
+      agreement: "",
+    },
   });
 
   const formForEstablishmentSearchEngine = useForm<
     z.infer<typeof formSchemaForEstablishment>
   >({
     resolver: zodResolver(formSchemaForEstablishment),
+    defaultValues: {
+      category: "",
+      name: "",
+      city: "",
+      finess: "",
+      siret: "",
+    },
   });
 
   function handleSubmitPractitionerSearchEngine(
@@ -114,7 +131,6 @@ export const MapProvider = ({ children }: PropsWithChildren) => {
   return (
     <MapContext.Provider
       value={{
-        isMenuOpened,
         isFiltersSheetOpened,
         isResultsOpen,
         isSatelliteMode,
@@ -124,8 +140,8 @@ export const MapProvider = ({ children }: PropsWithChildren) => {
         practitioners,
         establishments,
         fields,
+        userLocation,
 
-        setIsMenuOpened,
         setIsFiltersSheetOpened,
         setIsResultsOpen,
         setIsSatelliteMode,
@@ -138,6 +154,8 @@ export const MapProvider = ({ children }: PropsWithChildren) => {
         formForEstablishmentSearchEngine,
         handleSubmitPractitionerSearchEngine,
         handleSubmitEstablishmentSearchEngine,
+
+        getUserLocation,
       }}
     >
       {children}

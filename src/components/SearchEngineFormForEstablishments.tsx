@@ -1,4 +1,3 @@
-import { ScrollArea } from "@/components/ui/scroll-area.tsx";
 import {
   Form,
   FormControl,
@@ -46,57 +45,75 @@ const SearchEngineFormForEstablishments = () => {
   if (!formForEstablishmentSearchEngine) return null;
 
   return (
-    <ScrollArea className={"h-full"}>
-      <Form {...formForEstablishmentSearchEngine}>
-        <form
-          className={"py-4 flex flex-col gap-2 sm:gap-2 px-2"}
-          onSubmit={formForEstablishmentSearchEngine.handleSubmit(
-            handleSubmitEstablishmentSearchEngine,
-          )}
-        >
-          {fieldsInput.map(({ label, name, options }) => {
-            return (
-              <FormField
-                key={label}
-                control={formForEstablishmentSearchEngine.control}
-                name={name}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{label}</FormLabel>
-                    {options ? (
-                      <Select
-                        disabled={isFetchingEstablishments}
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {options.map(({ id, libelle }) => (
-                            <SelectItem key={id} value={libelle}>
-                              {libelle}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    ) : (
+    <Form {...formForEstablishmentSearchEngine}>
+      <form
+        className={"pb-4 flex flex-col gap-1 sm:gap-2 px-2"}
+        onSubmit={formForEstablishmentSearchEngine.handleSubmit(
+          handleSubmitEstablishmentSearchEngine,
+        )}
+      >
+        {fieldsInput.map(({ label, name, options }) => {
+          return (
+            <FormField
+              key={label}
+              control={formForEstablishmentSearchEngine.control}
+              name={name}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{label}</FormLabel>
+                  {options ? (
+                    <Select
+                      disabled={isFetchingEstablishments}
+                      onValueChange={field.onChange}
+                      value={field.value}
+                    >
                       <FormControl>
-                        <Input {...field} disabled={isFetchingEstablishments} />
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
                       </FormControl>
-                    )}
-                  </FormItem>
-                )}
-              />
-            );
-          })}
+                      <SelectContent>
+                        {options.map(({ id, libelle }) => (
+                          <SelectItem key={id} value={libelle}>
+                            {libelle}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  ) : (
+                    <FormControl>
+                      <Input {...field} disabled={isFetchingEstablishments} />
+                    </FormControl>
+                  )}
+                </FormItem>
+              )}
+            />
+          );
+        })}
 
-          <Button type="submit">Filtrer</Button>
-        </form>
-      </Form>
-    </ScrollArea>
+        <div className={"flex gap-2"}>
+          <Button type="submit" className={"flex-1"}>
+            Filtrer
+          </Button>
+          <Button
+            variant={"destructive"}
+            type="reset"
+            className={"flex-1"}
+            onClick={(e) => {
+              e.preventDefault();
+
+              Object.keys(formForEstablishmentSearchEngine.getValues()).forEach(
+                (field) => {
+                  formForEstablishmentSearchEngine.setValue(field, "");
+                },
+              );
+            }}
+          >
+            Réinitialiser
+          </Button>
+        </div>
+      </form>
+    </Form>
   );
 };
 

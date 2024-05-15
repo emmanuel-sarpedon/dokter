@@ -9,7 +9,7 @@ export default function Home() {
   const Map = dynamic(() => import("@/components/Map.tsx"), {
     ssr: false,
     loading: () => (
-      <section className={"w-screen h-screen flex items-center justify-center"}>
+      <section className={"w-screen h-dvh flex items-center justify-center"}>
         <H1>Dokter.myapp.re</H1>
         <MutatingDots color={"#3066ff"} secondaryColor={"#ff0000"} />
       </section>
@@ -18,7 +18,7 @@ export default function Home() {
 
   return (
     <main>
-      <div className={"w-screen h-screen border relative"}>
+      <div className={"w-screen h-dvh border relative"}>
         <MapProvider>
           <Map />
         </MapProvider>

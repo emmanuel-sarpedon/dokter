@@ -13,7 +13,6 @@ import {
   SelectValue,
 } from "@/components/ui/select.tsx";
 import { Button } from "@/components/ui/button.tsx";
-import { ScrollArea } from "@/components/ui/scroll-area.tsx";
 import { useContext } from "react";
 import { MapContext } from "@/context/MapProvider.tsx";
 
@@ -42,52 +41,68 @@ export default function SearchEngineFormForPractitioners() {
   if (!formForPractitionerSearchEngine) return null;
 
   return (
-    <ScrollArea className={"h-full"}>
-      <Form {...formForPractitionerSearchEngine}>
-        <form
-          className={"py-4 flex flex-col gap-2 sm:gap-2 px-2"}
-          onSubmit={formForPractitionerSearchEngine.handleSubmit(
-            handleSubmitPractitionerSearchEngine,
-          )}
-        >
-          {fieldsInput.map(({ label, name, options }) => {
-            return (
-              <FormField
-                key={name}
-                control={formForPractitionerSearchEngine.control}
-                name={name}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{label}</FormLabel>
-                    <Select
-                      disabled={isFetchingPractitioner}
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {options.map(({ id, libelle }) => (
-                          <SelectItem key={id} value={libelle}>
-                            {libelle}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </FormItem>
-                )}
-              />
-            );
-          })}
+    <Form {...formForPractitionerSearchEngine}>
+      <form
+        className={"pb-4 flex flex-col gap-1 sm:gap-2 px-2"}
+        onSubmit={formForPractitionerSearchEngine.handleSubmit(
+          handleSubmitPractitionerSearchEngine,
+        )}
+      >
+        {fieldsInput.map(({ label, name, options }) => {
+          return (
+            <FormField
+              key={name}
+              control={formForPractitionerSearchEngine.control}
+              name={name}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{label}</FormLabel>
+                  <Select
+                    disabled={isFetchingPractitioner}
+                    onValueChange={field.onChange}
+                    value={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {options.map(({ id, libelle }) => (
+                        <SelectItem key={id} value={libelle}>
+                          {libelle}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </FormItem>
+              )}
+            />
+          );
+        })}
 
-          <Button type="submit" disabled={isFetchingPractitioner}>
+        <div className={"flex gap-2"}>
+          <Button type="submit" className={"flex-1"}>
             Filtrer
           </Button>
-        </form>
-      </Form>
-    </ScrollArea>
+          <Button
+            variant={"destructive"}
+            type="reset"
+            className={"flex-1"}
+            onClick={(e) => {
+              e.preventDefault();
+
+              Object.keys(formForPractitionerSearchEngine.getValues()).forEach(
+                (field) => {
+                  formForPractitionerSearchEngine.setValue(field, "");
+                },
+              );
+            }}
+          >
+            Réinitialiser
+          </Button>
+        </div>
+      </form>
+    </Form>
   );
 }

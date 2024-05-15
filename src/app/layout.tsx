@@ -3,7 +3,7 @@ import "./globals.css";
 import { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import { GoogleTagManager, GoogleAnalytics } from "@next/third-parties/google";
-
+import { Toaster } from "@/components/ui/sonner";
 const DosisFont = Dosis({ subsets: ["latin"], variable: "--font-dosis" });
 
 export const metadata = {
@@ -23,8 +23,9 @@ export default function RootLayout({
       <GoogleTagManager gtmId={"GTM-M8TDMF57"} />
       <GoogleAnalytics gaId={"G-6G4V712XV5"} />
 
-      <body className={cn(DosisFont.variable, "font-dosis min-h-screen")}>
+      <body className={cn(DosisFont.variable, "font-dosis min-h-dvh")}>
         {children}
+        <Toaster />
       </body>
     </html>
   );
